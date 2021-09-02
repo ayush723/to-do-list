@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ayush723/to-do-list/src/domain/list"
-	"github.com/ayush723/to-do-list/src/services/list_services"
+	"github.com/ayush723/to-do-list/src/service/list_services"
 
 	"github.com/ayush723/utils-go_bookstore/rest_errors"
 	"github.com/gin-gonic/gin"
