@@ -1,9 +1,9 @@
-package domain
+package list
 
 import (
 	"errors"
 
-	"github.com/ayush723/to-do-list/src/datasource/list_db"
+	"github.com/ayush723/to-do-list/src/datasources/list_db"
 	"github.com/ayush723/utils-go_bookstore/rest_errors"
 )
 
