@@ -3,6 +3,7 @@ package list
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/ayush723/to-do-list/src/domain/list"
 	"github.com/ayush723/to-do-list/src/service/list_services"
@@ -10,6 +11,16 @@ import (
 	"github.com/ayush723/utils-go_bookstore/rest_errors"
 	"github.com/gin-gonic/gin"
 )
+
+func getId(toDoIdParam string)(int64, rest_errors.RestErr){
+	
+	toDoId, err := strconv.ParseInt(toDoIdParam, 10, 64)
+	if err != nil{
+		return 0, rest_errors.NewBadRequestError("id should be a number")
+	}
+	return toDoId, nil
+}
+
 
 func Create(c *gin.Context){
 	var toDoList list.ToDoList
@@ -38,14 +49,49 @@ func Get(c *gin.Context){
 
 
 func Update(c *gin.Context){
+	toDoId, err := getId(c.Param("todo-id"))
+	if err != nil{
+		c.JSON(err.Status(), err)
+		return
+	}
 
+	var toDoList list.ToDoList
+	if err := c.ShouldBindJSON(&toDoList); err != nil{
+		restErr := rest_errors.NewBadRequestError("invalid json body")
+		c.JSON(restErr.Status(), restErr)
+		return
+	}
+	toDoList.Id = toDoId
+
+	result, err := list_services.ListService.Update(toDoList)
+	if err != nil {
+		c.JSON(err.Status(), err)
+		return
+	}
+	c.JSON(http.StatusOK, result)
 }
 
 
 func Delete(c *gin.Context){
-
+	toDoId, idErr := getId(c.Param("todo-id"))
+	if idErr != nil{
+		c.JSON(idErr.Status(), idErr)
+		return
+	}
+	if err := list_services.ListService.Delete(toDoId); err != nil{
+		c.JSON(err.Status(), err)
+		return
+	}
+	c.JSON(http.StatusOK, map[string]string{"status":"Deleted"})
 }
 
 func Search(c *gin.Context){
-	
+	status := c.Query("status")
+
+	toDoLists, err := list_services.ListService.Search(status)
+	if err != nil{
+		c.JSON(err.Status(), err)
+		return
+	}
+	c.JSON(http.StatusOK, toDoLists)
 }

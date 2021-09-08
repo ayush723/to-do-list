@@ -11,9 +11,10 @@ var(
 
 type listServiceInterface interface{
 	Create(list.ToDoList)(*list.ToDoList, rest_errors.RestErr)
-	Get()(list.ToDoLists, rest_errors.RestErr){
-	Update(list.ToDoList)(list.ToDoList, rest_errors.RestErr){
-
+	Get()(list.ToDoLists, rest_errors.RestErr)
+	Update(list.ToDoList)(*list.ToDoList, rest_errors.RestErr)
+	Delete(int64) (rest_errors.RestErr)
+	Search(string)(list.ToDoLists ,rest_errors.RestErr)
 }
 
 type listService struct{}
@@ -30,6 +31,20 @@ func (s *listService) Get()(list.ToDoLists, rest_errors.RestErr){
 	return dao.Get()
 }
 
-func (s *listService) Update(toDoList list.ToDoList)(list.ToDoList, rest_errors.RestErr){
-	return nil, nil
+func (s *listService) Update(toDoList list.ToDoList)(*list.ToDoList, rest_errors.RestErr){
+	err := toDoList.Update()
+	if err != nil{
+		return nil, err
+	}
+	return &toDoList, nil
+}
+
+func (s *listService) Delete(toDoId int64) rest_errors.RestErr{
+	toDoList := &list.ToDoList{Id: toDoId}
+	return toDoList.Delete()
+}
+
+func (s *listService) Search(status string) (list.ToDoLists, rest_errors.RestErr){
+	dao := &list.ToDoList{}
+	return dao.FindByStatus(status)
 }
