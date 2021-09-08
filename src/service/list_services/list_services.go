@@ -22,3 +22,12 @@ func (s *listService)Create(toDoList list.ToDoList)(*list.ToDoList, rest_errors.
 	}
 	return &toDoList, nil
 }
+
+func (s *listService) Get()(list.ToDoLists, rest_errors.RestErr){
+	dao := &list.ToDoList{}
+	return dao.Get()
+}
+
+func (s *listService) Update(toDoList list.ToDoList)(list.ToDoList, rest_errors.RestErr){
+	
+}

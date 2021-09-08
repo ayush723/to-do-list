@@ -1,6 +1,7 @@
 package list
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/ayush723/to-do-list/src/domain/list"
@@ -22,11 +23,12 @@ func Create(c *gin.Context){
 		c.JSON(saveErr.Status(), saveErr)
 		return
 	}
+	fmt.Println(result)
 	c.JSON(http.StatusCreated, result)
 }
 
 func Get(c *gin.Context){
-
+	toDoList, getErr := list_services.ListService.
 }
 
 

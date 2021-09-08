@@ -9,7 +9,10 @@ import (
 
 const (
 	queryInsertTask = "INSERT INTO list(description) VALUES(?);"
-	queryGetTask = ""
+	queryGetTask = "SELECT * FROM toDoList_db;"
+	queryFindByStatusTask= "SELECT * FROM toDoList_db WHERE status=?;"
+	queryUpdateTask = "UPDATE toDoList_db SET description=?, status=? WHERE id = ?;"
+	queryDeleteTask = "DELETE FROM toDoList_db WHERE id=?"
 )
 
 
@@ -36,7 +39,81 @@ func (toDoList *ToDoList) Save() rest_errors.RestErr{
 
 	return nil
 }
-func (toDoList *ToDoList) Get(){}
-func (toDoList *ToDoList) FindByStatus(){}
-func (toDoList *ToDoList) Update(){}
-func (toDoList *ToDoList) Delete(){}
+func (toDoList *ToDoList) Get()([]ToDoList, rest_errors.RestErr){
+	stmt, err := list_db.Client.Prepare(queryGetTask)
+	if err != nil {
+		// logger.Error("error when trying to prepare save user statement",err)
+		return nil, rest_errors.NewInternalServerError("error when trying to get task", errors.New("database error"))
+	}
+	defer stmt.Close()
+	rows, getErr := stmt.Query()
+	if getErr != nil{
+		return nil, rest_errors.NewInternalServerError("error when trying to get task", errors.New("database error"))
+	}
+	defer rows.Close()
+	results := make([]ToDoList, 0)
+	for rows.Next() {
+		var toDoList ToDoList
+		if getErr := rows.Scan(&toDoList.Id, &toDoList.Description, &toDoList.Status); getErr != nil{
+			return nil, rest_errors.NewInternalServerError("error when trying to get task", errors.New("database error"))
+		}
+		results = append(results, toDoList)
+	}
+	if len(results) == 0 {
+		return nil, rest_errors.NewInternalServerError("error when trying to get task", errors.New("database error"))
+	}
+
+	return results, nil
+}
+func (toDoList *ToDoList) FindByStatus(status string)([]ToDoList, rest_errors.RestErr){
+	stmt, err := list_db.Client.Prepare(queryFindByStatusTask)
+	if err != nil{
+		return nil, rest_errors.NewInternalServerError("error when trying to find user by status", errors.New("database error"))
+	}
+	defer stmt.Close()
+	rows, err := stmt.Query(status)
+	if err != nil {
+		return nil, rest_errors.NewInternalServerError("error when trying to find user by status", errors.New("database error"))
+	}
+	defer rows.Close()
+
+	results := make ([]ToDoList, 0)
+
+	for rows.Next(){
+		var toDoList ToDoList
+		if err := rows.Scan(&toDoList.Id, &toDoList.Description, &toDoList.Status); err!=nil{
+		return nil, rest_errors.NewInternalServerError("error when trying to find user by status", errors.New("database error"))
+
+		}
+		results = append(results, toDoList)
+	}
+	if len(results) == 0 {
+		return nil, rest_errors.NewInternalServerError("error when trying to get task", errors.New("database error"))
+	}
+	return results, nil
+}
+func (toDoList *ToDoList) Update()rest_errors.RestErr{
+	stmt, err := list_db.Client.Prepare(queryUpdateTask)
+	if err != nil{
+		return rest_errors.NewInternalServerError("error when trying to update task", errors.New("database error"))
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(toDoList.Id, toDoList.Description, toDoList.Status)
+	if err != nil{
+		return rest_errors.NewInternalServerError("error when trying to update task", errors.New("database error"))
+	}
+	return nil
+}
+
+func (toDoList *ToDoList) Delete()rest_errors.RestErr{
+	stmt, err := list_db.Client.Prepare(queryDeleteTask)
+	if err != nil{
+		return rest_errors.NewInternalServerError("error when trying to delete task", errors.New("database error"))
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(toDoList.Id)
+	if err != nil{
+		return rest_errors.NewInternalServerError("error when trying to delete task", errors.New("database error"))
+	}
+	return nil
+}
