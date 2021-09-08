@@ -11,6 +11,8 @@ var(
 
 type listServiceInterface interface{
 	Create(list.ToDoList)(*list.ToDoList, rest_errors.RestErr)
+	Get()(list.ToDoLists, rest_errors.RestErr){
+	Update(list.ToDoList)(list.ToDoList, rest_errors.RestErr){
 
 }
 
@@ -29,5 +31,5 @@ func (s *listService) Get()(list.ToDoLists, rest_errors.RestErr){
 }
 
 func (s *listService) Update(toDoList list.ToDoList)(list.ToDoList, rest_errors.RestErr){
-	
+	return nil, nil
 }

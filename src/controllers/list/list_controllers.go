@@ -28,7 +28,12 @@ func Create(c *gin.Context){
 }
 
 func Get(c *gin.Context){
-	toDoList, getErr := list_services.ListService.
+	toDoLists, getErr := list_services.ListService.Get()
+	if getErr != nil{
+		c.JSON(getErr.Status(), getErr)
+		return 
+	}
+	c.JSON(http.StatusOK, toDoLists)
 }
 
 
