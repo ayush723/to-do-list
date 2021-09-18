@@ -43,7 +43,9 @@ func Get(c *gin.Context) {
 		c.JSON(getErr.Status(), getErr)
 		return
 	}
-	c.JSON(http.StatusOK, toDoLists)
+	c.JSON(http.StatusOK, gin.H{
+		"results":toDoLists,
+	})
 }
 
 func GetById(c *gin.Context) {
@@ -57,6 +59,7 @@ func GetById(c *gin.Context) {
 		c.JSON(getErr.Status(), getErr)
 		return
 	}
+
 	c.JSON(http.StatusOK, toDoList)
 }
 
@@ -83,6 +86,7 @@ func Update(c *gin.Context) {
 		c.JSON(err.Status(), err)
 		return
 	}
+
 	c.JSON(http.StatusOK, result)
 }
 
@@ -96,6 +100,7 @@ func Delete(c *gin.Context) {
 		c.JSON(err.Status(), err)
 		return
 	}
+
 	c.JSON(http.StatusOK, map[string]string{"status": "Deleted"})
 }
 
@@ -110,5 +115,6 @@ func Search(c *gin.Context) {
 		c.JSON(err.Status(), err)
 		return
 	}
+
 	c.JSON(http.StatusOK, toDoLists)
 }

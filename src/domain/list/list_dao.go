@@ -78,7 +78,7 @@ func (toDoList *ToDoList) Get() ([]ToDoList, rest_errors.RestErr) {
 		var toDoList ToDoList
 		if getErr := rows.Scan(&toDoList.Id, &toDoList.Description, &toDoList.Status); getErr != nil {
 			fmt.Println(getErr)
-			
+
 			return nil, rest_errors.NewInternalServerError("error when trying to get task", errors.New("database error"))
 		}
 		results = append(results, toDoList)

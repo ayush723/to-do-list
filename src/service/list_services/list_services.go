@@ -36,7 +36,7 @@ func (s *listService) GetById(id int64) (*list.ToDoList, rest_errors.RestErr) {
 
 func (s *listService) Get() (list.ToDoLists, rest_errors.RestErr) {
 	dao := &list.ToDoList{}
-	fmt.Println("10")
+	
 	return dao.Get()
 }
 
