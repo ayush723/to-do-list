@@ -44,7 +44,7 @@ func Get(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"results":toDoLists,
+		"results": toDoLists,
 	})
 }
 
