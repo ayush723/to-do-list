@@ -6,7 +6,6 @@ import (
 
 var (
 	router = gin.Default()
-	
 )
 
 func StartApplication() {
